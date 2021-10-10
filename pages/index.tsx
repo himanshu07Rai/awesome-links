@@ -1,7 +1,24 @@
-import Head from 'next/head';
-import { links } from '../data/links';
+import Head from "next/head";
+// import { links } from "../data/links";
+import { gql, useQuery } from "@apollo/client";
+
+const AllLinksQuery = gql`
+  query {
+    links {
+      id
+      category
+      description
+      imageUrl
+      title
+      url
+    }
+  }
+`;
 
 export default function Home() {
+  const { data, loading, error } = useQuery(AllLinksQuery);
+  if (error) return <p>Oh no... {error.message}</p>;
+  if (loading) return <p>Loading</p>;
   return (
     <div>
       <Head>
@@ -11,7 +28,7 @@ export default function Home() {
 
       <div className="container mx-auto max-w-5xl my-20">
         <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {links.map((link) => (
+          {data.links.map((link) => (
             <li key={link.id} className="shadow  max-w-md  rounded">
               <img className="shadow-sm" src={link.imageUrl} />
               <div className="p-5 flex flex-col space-y-2">
@@ -19,7 +36,7 @@ export default function Home() {
                 <p className="text-lg font-medium">{link.title}</p>
                 <p className="text-gray-600">{link.description}</p>
                 <a href={link.url} className="flex hover:text-blue-500">
-                  {link.url.replace(/(^\w+:|^)\/\//, '')}
+                  {link.url.replace(/(^\w+:|^)\/\//, "")}
                   <svg
                     className="w-4 h-4 my-1"
                     fill="currentColor"
