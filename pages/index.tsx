@@ -1,5 +1,5 @@
 import Head from "next/head";
-// import { links } from "../data/links";
+import { useUser } from "@auth0/nextjs-auth0";
 import { gql, useQuery } from "@apollo/client";
 
 const AllLinksQuery = gql`
@@ -16,6 +16,7 @@ const AllLinksQuery = gql`
 `;
 
 export default function Home() {
+  const { user } = useUser();
   const { data, loading, error } = useQuery(AllLinksQuery);
   if (error) return <p>Oh no... {error.message}</p>;
   if (loading) return <p>Loading</p>;
@@ -28,6 +29,13 @@ export default function Home() {
 
       <div className="container mx-auto max-w-5xl my-20">
         <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          {user && (
+            <div>
+              <h1 className="text-lg">Welcome {user.name} ! </h1>
+              <a href="/api/auth/logout">Logout</a>
+            </div>
+          )}
+
           {data.links.map((link) => (
             <li key={link.id} className="shadow  max-w-md  rounded">
               <img className="shadow-sm" src={link.imageUrl} />
