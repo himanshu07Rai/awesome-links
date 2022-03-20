@@ -19,7 +19,8 @@
     "**/*.ts",
     "**/*.tsx",
     "lib/mongodb.js",
-    "connectDB.js"
+    "connectDB.js",
+    "pages/_app.js"
   ],
   "exclude": ["node_modules"]
 }
