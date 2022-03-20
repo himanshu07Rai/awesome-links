@@ -3,6 +3,7 @@ import { useSession, signIn, signOut } from "next-auth/react";
 export default function Component() {
   const { data: session } = useSession();
   console.log(session);
+
   if (session) {
     return (
       <>
@@ -18,3 +19,22 @@ export default function Component() {
     </>
   );
 }
+
+// export async function getServerSideProps({ req }) {
+//   const session = await getSession({ req });
+//   console.log(session);
+
+//   if (!session) {
+//     return {
+//       redirect: {
+//         destination: "/api/auth/signin",
+//         permanent: false,
+//       },
+//     };
+//   }
+//   return {
+//     props: {
+//       session,
+//     },
+//   };
+// }
