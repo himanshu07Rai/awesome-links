@@ -4,8 +4,11 @@ import React, { useState } from "react";
 import axios from "axios";
 import cookie from "js-cookie";
 import { toast } from "react-toastify";
+import { useSession, signIn, signOut, getSession } from "next-auth/react";
 
-const Login = () => {
+const Login = ({ session }) => {
+  // const { data: session } = useSession();
+  console.log(session);
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -23,18 +26,36 @@ const Login = () => {
     );
     console.log(data);
 
-    toast.success(data.message);
+    // toast.success(data.message);
 
-    cookie.set("token");
     cookie.set("token", data.token);
-    cookie.set("user", JSON.stringify(data?.user));
+    console.log(JSON.stringify(data?.User));
+
+    cookie.set("user", JSON.stringify(data?.User));
     router.push("/");
 
     setEmail("");
     setPassword("");
   };
+
+  const logoutHandler = async () => {
+    if (session) {
+      signOut();
+    }
+    cookie.remove("token");
+    cookie.remove("user");
+  };
+
+  if (session) {
+    return (
+      <>
+        Signed in as {session.user.email} <br />
+        <button onClick={logoutHandler}>Sign out</button>
+      </>
+    );
+  }
   return (
-    <div>
+    <>
       <form onSubmit={handleSubmit}>
         <h1>Login</h1>
         <input
@@ -53,8 +74,15 @@ const Login = () => {
         />
         <button type="submit">Login</button>
       </form>
-    </div>
+    </>
   );
 };
 
 export default Login;
+
+export async function getServerSideProps(context) {
+  const session = await getSession(context);
+  return {
+    props: { session },
+  };
+}
