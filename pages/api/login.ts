@@ -30,7 +30,9 @@ export default async (req, res) => {
           expiresIn: "7d",
         }
       );
-      return res.status(200).json({ user: user, token: token });
+      return res
+        .status(200)
+        .json({ user: user, token: token, message: "login successful" });
     }
   } catch (error) {
     console.log(error.message);
