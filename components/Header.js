@@ -35,7 +35,7 @@ export default function ButtonAppBar() {
 
   useEffect(() => {
     setUserState(user);
-  }, [userState]);
+  }, [router, userState]);
 
   const logoutHandler = async () => {
     if (session) {
