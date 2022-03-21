@@ -29,13 +29,13 @@ export default function ButtonAppBar() {
     ? session?.user.email
     : "";
 
-  console.log(session);
+  // console.log(session);
 
-  console.log(user);
+  // console.log(user);
 
   useEffect(() => {
     setUserState(user);
-  }, [router, userState]);
+  }, [userState]);
 
   const logoutHandler = async () => {
     if (session) {

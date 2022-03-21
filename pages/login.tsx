@@ -1,17 +1,34 @@
 import { useRouter } from "next/router";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import cookie from "js-cookie";
 import { toast } from "react-toastify";
-import { useSession, signIn, signOut, getSession } from "next-auth/react";
+import { parseCookies } from "nookies";
+import { signIn, getSession, useSession } from "next-auth/react";
 
 const Login = ({ session }) => {
   // const { data: session } = useSession();
-  console.log(session);
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const cookies = parseCookies();
+  console.log(cookies);
+
+  const user = cookies?.user
+    ? JSON.parse(cookies.user).email
+    : session?.user
+    ? session?.user.email
+    : "";
+  console.log(session);
+
+  useEffect(() => {
+    if (user) {
+      router.push("/");
+    }
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const config = {
@@ -38,24 +55,11 @@ const Login = ({ session }) => {
     setPassword("");
   };
 
-  const logoutHandler = async () => {
-    if (session) {
-      signOut();
-    }
-    cookie.remove("token");
-    cookie.remove("user");
-  };
+  console.log(user);
 
-  if (session) {
-    return (
-      <>
-        Signed in as {session.user.email} <br />
-        <button onClick={logoutHandler}>Sign out</button>
-      </>
-    );
-  }
   return (
     <>
+      <button onClick={() => signIn()}>Sign in</button>
       <form onSubmit={handleSubmit}>
         <h1>Login</h1>
         <input
@@ -82,6 +86,17 @@ export default Login;
 
 export async function getServerSideProps(context) {
   const session = await getSession(context);
+  console.log(session);
+
+  if (session) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
+
   return {
     props: { session },
   };
